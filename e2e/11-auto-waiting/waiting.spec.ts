@@ -1,33 +1,16 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 11: auto-waiting (ไม่ต้องรอเอง)
-// ฝึก: web-first assertions, ไม่ใช้ waitForTimeout
-//
-// หน้านี้โหลดข้อมูลช้า 1.5 วินาที (เหมือน findBy / waitFor ใน Vitest แต่ไม่ต้องเขียนเพิ่ม)
-// expect(locator).toBeVisible() "ลองซ้ำให้เอง" จนผ่านหรือหมดเวลา 5 วินาที
-//
-//   ดี:    await expect(page.getByText("ข้อมูลมาแล้ว")).toBeVisible();
-//   ห้าม:  await page.waitForTimeout(2000);   // เดาเวลา ช้าเกินไปหรือสั้นเกินไปก็พัง = flaky
-//
-// action อย่าง click / fill ก็รอ element พร้อมเองเช่นกัน
-// ถ้าอยากให้รอนานกว่า 5 วิ: await expect(x).toBeVisible({ timeout: 10_000 });
-// ================================================
-
 test.beforeEach(async ({ page }) => {
   await page.goto("/lessons/11-auto-waiting");
 });
 
+test("ข้อความต้องมาหลังโหลดเสร็จ โดยไม่ต้อง sleep", async ({ page }) => {
+  // API ตอบช้า 1.5 วินาที แต่ expect รอให้เองสูงสุด 5 วินาที
+  await expect(page.getByText("ข้อมูลมาแล้ว")).toBeVisible();
+});
 
-// ------------------------------------------------
-// ข้อ 1: ต้องเห็น "ข้อมูลมาแล้ว" (ห้ามใช้ waitForTimeout)
-// ------------------------------------------------
-test.fixme("ข้อความต้องมาหลังโหลดเสร็จ โดยไม่ต้อง sleep", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 2: ตอนแรกต้องเห็น "กำลังโหลด..." แล้วมันต้องหายไป (toBeHidden) แล้วเห็น "ข้อมูลมาแล้ว"
-// ------------------------------------------------
-test.fixme("ข้อความ กำลังโหลด ต้องหายไปเมื่อข้อมูลมา", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
+test("ข้อความ กำลังโหลด ต้องหายไปเมื่อข้อมูลมา", async ({ page }) => {
+  await expect(page.getByText("กำลังโหลด...")).toBeVisible();
+  await expect(page.getByText("กำลังโหลด...")).toBeHidden();
+  await expect(page.getByText("ข้อมูลมาแล้ว")).toBeVisible();
+});

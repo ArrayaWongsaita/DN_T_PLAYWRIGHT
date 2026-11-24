@@ -1,41 +1,25 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 05: กรอกฟอร์ม
-// ฝึก: fill, press, clear
-//
-//   await locator.fill("ข้อความ")   ใส่ข้อความทั้งช่อง (แทนที่ของเดิม) เร็วกว่า user.type
-//   await locator.press("Enter")    กดคีย์บนช่องนั้น เช่น Enter, Tab, Escape
-//   await locator.clear()           ล้างช่อง
-//
-// ตัวอย่าง:
-//   await page.getByLabel("ชื่อ").fill("สมชาย");
-//   await page.getByRole("button", { name: "ทักทาย" }).click();
-//   await expect(page.getByText("สวัสดี, สมชาย")).toBeVisible();
-// ================================================
-
 test.beforeEach(async ({ page }) => {
   await page.goto("/lessons/05-fill-form");
 });
 
+test("กรอกชื่อแล้วกด ทักทาย ต้องเห็นคำทักทาย", async ({ page }) => {
+  await page.getByLabel("ชื่อ").fill("สมชาย");
+  await page.getByRole("button", { name: "ทักทาย" }).click();
+  await expect(page.getByText("สวัสดี, สมชาย")).toBeVisible();
+});
 
-// ------------------------------------------------
-// ข้อ 1: กรอกชื่อ "สมชาย" กดปุ่ม "ทักทาย" ต้องเห็น "สวัสดี, สมชาย"
-// ------------------------------------------------
-test.fixme("กรอกชื่อแล้วกด ทักทาย ต้องเห็นคำทักทาย", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
+test("กด Enter ก็ส่งฟอร์มได้", async ({ page }) => {
+  await page.getByLabel("ชื่อ").fill("สมหญิง");
+  await page.getByLabel("ชื่อ").press("Enter");
+  await expect(page.getByText("สวัสดี, สมหญิง")).toBeVisible();
+});
 
-
-// ------------------------------------------------
-// ข้อ 2: กรอกชื่อ "สมหญิง" แล้วกด Enter ในช่อง (ไม่คลิกปุ่ม) ต้องเห็น "สวัสดี, สมหญิง"
-// แนวทาง: page.getByLabel("ชื่อ").press("Enter")
-// ------------------------------------------------
-test.fixme("กด Enter ก็ส่งฟอร์มได้", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 3: กรอกชื่อ แล้วล้างช่อง (clear) แล้วกด "ทักทาย" ต้องเห็น "กรุณากรอกชื่อ"
-// ------------------------------------------------
-test.fixme("ล้างช่องแล้วกด ทักทาย ต้องเห็นข้อความเตือน", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 3 ตรงนี้
+test("ล้างช่องแล้วกด ทักทาย ต้องเห็นข้อความเตือน", async ({ page }) => {
+  const name = page.getByLabel("ชื่อ");
+  await name.fill("สมชาย");
+  await name.clear();
+  await page.getByRole("button", { name: "ทักทาย" }).click();
+  await expect(page.getByText("กรุณากรอกชื่อ")).toBeVisible();
+});

@@ -1,19 +1,19 @@
 import type { Locator, Page } from "@playwright/test";
 
-// Page Object ของหน้า /shop/cart
 export class CartPage {
-  // 👉 ข้อความยอดรวม (ขึ้นต้นด้วย "รวม ฿") ใช้ page.getByText(/^รวม ฿/)
-  total!: Locator;
-  // 👉 รายการสินค้าในตะกร้า (role listitem)
-  items!: Locator;
+  readonly total: Locator;
+  readonly items: Locator;
 
   constructor(private readonly page: Page) {
-    // 👉 กำหนด this.total และ this.items ตรงนี้
+    this.total = page.getByText(/^รวม ฿/);
+    this.items = page.getByRole("listitem");
   }
 
-  // 👉 เปิดหน้า /shop/cart
-  async goto(): Promise<void> {}
+  async goto(): Promise<void> {
+    await this.page.goto("/shop/cart");
+  }
 
-  // 👉 กดปุ่ม "ไปชำระเงิน"
-  async checkout(): Promise<void> {}
+  async checkout(): Promise<void> {
+    await this.page.getByRole("button", { name: "ไปชำระเงิน" }).click();
+  }
 }

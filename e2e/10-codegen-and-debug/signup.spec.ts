@@ -1,35 +1,16 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 10: codegen และ debug
-// ฝึก: playwright codegen, --debug, page.pause()
-//
-// codegen คือโหมด "อัดการใช้งาน": เราคลิก/พิมพ์เอง Playwright เขียนโค้ด test ให้
-//   pnpm exec playwright codegen localhost:3000/lessons/10-codegen-and-debug
-//   (ต้องเปิดเซิร์ฟเวอร์ก่อน: pnpm dev ใน terminal อีกอัน)
-//   จะเปิดเบราว์เซอร์ + หน้าต่าง Inspector ที่โชว์โค้ดสดๆ ให้ก๊อปไปใช้
-//   ปุ่ม "Assert visibility" ในแถบเครื่องมือใช้เพิ่ม assertion ได้
-//
-// ข้อควรระวัง: โค้ดจาก codegen เป็นแค่ร่างแรก ให้ตรวจเสมอว่าใช้ getByRole / getByLabel หรือยัง
-//
-// debug: รันทีละขั้น
-//   pnpm test:e2e e2e/10-codegen-and-debug --debug   เปิด Inspector กด Step over ทีละบรรทัด
-//   await page.pause();   ใส่ในโค้ดตรงที่อยากหยุดดู (ต้องรันแบบ --headed หรือ --debug) ดูเสร็จลบทิ้ง
-// ================================================
+test("สมัครสมาชิกสำเร็จ", async ({ page }) => {
+  await page.goto("/lessons/10-codegen-and-debug");
+  await page.getByLabel("ชื่อ").fill("สมชาย");
+  await page.getByLabel("อีเมล").fill("somchai@example.com");
+  await page.getByLabel("รับข่าวสาร").check();
+  await page.getByRole("button", { name: "สมัคร" }).click();
+  await expect(page.getByText("สมัครสำเร็จ")).toBeVisible();
+});
 
-
-// ------------------------------------------------
-// ข้อ 1: ใช้ codegen อัดการสมัคร: กรอกชื่อ "สมชาย" อีเมล "somchai@example.com"
-//        ติ๊ก "รับข่าวสาร" กดปุ่ม "สมัคร" แล้วต้องเห็น "สมัครสำเร็จ"
-//        ก๊อปโค้ดมาวางแล้วเก็บกวาดให้เหลือแต่ getByLabel / getByRole
-// ------------------------------------------------
-test.fixme("สมัครสมาชิกสำเร็จ", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 2: ไม่กรอกอะไรเลย กด "สมัคร" ต้องเห็น "กรุณากรอกชื่อ"
-// แนวทาง: เขียนเองโดยไม่ใช้ codegen แล้วลองรันด้วย --debug หยุดดูทีละขั้น
-// ------------------------------------------------
-test.fixme("ไม่กรอกชื่อต้องเห็นข้อความเตือน", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
+test("ไม่กรอกชื่อต้องเห็นข้อความเตือน", async ({ page }) => {
+  await page.goto("/lessons/10-codegen-and-debug");
+  await page.getByRole("button", { name: "สมัคร" }).click();
+  await expect(page.getByText("กรุณากรอกชื่อ")).toBeVisible();
+});

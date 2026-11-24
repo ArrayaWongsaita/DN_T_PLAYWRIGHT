@@ -1,44 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 08: เปิดเบราว์เซอร์ดูตอนเทส (headed และ UI mode)
-// ฝึก: --headed, --ui, -g, --project
-//
-// ปกติ Playwright รันเบราว์เซอร์แบบ "ไม่แสดงหน้าต่าง" (headless) เพื่อความเร็ว
-// บทนี้เขียน test สั้นๆ 2 อัน แล้วลองรันด้วยคำสั่งต่างๆ ให้เห็นกับตา
-//
-// คำสั่งที่ใช้ (รันใน terminal ที่โฟลเดอร์โปรเจกต์):
-//   pnpm test:e2e e2e/08-headed-and-ui-mode      รันปกติ (ไม่เห็นหน้าต่าง)
-//   pnpm test:e2e:headed e2e/08-headed-and-ui-mode   เปิดหน้าต่าง Chromium ให้ดูตอนเทสทำงาน
-//   pnpm test:e2e:ui                              เปิด UI mode: หน้าต่างควบคุม กดรันทีละ test
-//                                                  ดูภาพแต่ละขั้นย้อนหลัง (time travel) ได้
-//   pnpm test:e2e -g "เพิ่มผลไม้"                 รันเฉพาะ test ที่ชื่อมีคำนี้ (-g = grep)
-//   pnpm test:e2e --project=chromium              ระบุว่าจะรันเบราว์เซอร์ตัวไหน (ตอนนี้มีตัวเดียว)
-//
-// UI mode: ฝั่งซ้ายคือรายการ test กดลูกศรเพื่อรัน
-//          ฝั่งขวาคือภาพของหน้าเว็บ ณ แต่ละ action เลื่อนเมาส์ไปบนบรรทัดไหนก็เห็นภาพตอนนั้น
-//
-// ตัวอย่าง:
-//   await expect(page.getByRole("heading", { name: "ผลไม้" })).toBeVisible();
-// ================================================
-
 test.beforeEach(async ({ page }) => {
   await page.goto("/lessons/08-headed-and-ui-mode");
 });
 
+test("เริ่มต้นมีผลไม้ 3 อย่าง", async ({ page }) => {
+  await expect(page.getByRole("listitem")).toHaveCount(3);
+});
 
-// ------------------------------------------------
-// ข้อ 1: เริ่มต้นมีผลไม้ (listitem) 3 อย่าง
-// แนวทาง: เขียนเสร็จแล้วลองรันด้วย pnpm test:e2e:headed e2e/08-headed-and-ui-mode
-// ------------------------------------------------
-test.fixme("เริ่มต้นมีผลไม้ 3 อย่าง", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 2: กด "เพิ่มผลไม้" แล้วต้องมี 4 อย่าง และอันสุดท้ายคือ "ส้ม"
-// แนวทาง: toHaveCount(4) และ getByRole("listitem").last() + toHaveText("ส้ม")
-//         แล้วลองรันด้วย pnpm test:e2e:ui และ pnpm test:e2e -g "เพิ่มผลไม้"
-// ------------------------------------------------
-test.fixme("กด เพิ่มผลไม้ แล้วต้องมี ส้ม เป็นอันที่ 4", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
+test("กด เพิ่มผลไม้ แล้วต้องมี ส้ม เป็นอันที่ 4", async ({ page }) => {
+  await page.getByRole("button", { name: "เพิ่มผลไม้" }).click();
+  await expect(page.getByRole("listitem")).toHaveCount(4);
+  await expect(page.getByRole("listitem").last()).toHaveText("ส้ม");
+});

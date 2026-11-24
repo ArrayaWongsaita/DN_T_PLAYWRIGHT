@@ -1,46 +1,25 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 07: assertion แบบต่างๆ
-// ฝึก: toBeVisible, toBeHidden, toHaveCount, toHaveText, toBeDisabled, .not
-//
-//   expect(locator).toBeVisible()        มองเห็น
-//   expect(locator).toBeHidden()         มองไม่เห็น หรือไม่มีอยู่ใน DOM (ต่างจาก RTL ที่ต้องใช้ queryBy)
-//   expect(locator).toHaveCount(3)       นับจำนวน
-//   expect(locator).toHaveText("ชา")     ข้อความตรงกัน
-//   expect(locator).not.toBeDisabled()   .not กลับความหมาย
-//   locator.first() / locator.nth(1)     เลือกตัวที่ 1 / ตัวที่ 2 จากที่เจอหลายตัว
-//
-// สำคัญ: assertion แบบนี้ "ลองซ้ำให้เอง" จนกว่าจะผ่านหรือหมดเวลา (5 วินาที)
-// คล้าย waitFor ใน Vitest แต่ไม่ต้องเขียน ดูต่อบท 11
-//
-// ตัวอย่าง:
-//   await expect(page.getByRole("listitem")).toHaveCount(3);
-// ================================================
-
 test.beforeEach(async ({ page }) => {
   await page.goto("/lessons/07-assertions");
 });
 
+test("กดปุ่มแล้วรายละเอียดต้องแสดง กดอีกครั้งต้องซ่อน", async ({ page }) => {
+  const panel = page.getByText("รายละเอียดสินค้า");
+  await expect(panel).toBeHidden();
+  await page.getByRole("button", { name: "แสดงรายละเอียด" }).click();
+  await expect(panel).toBeVisible();
+  await page.getByRole("button", { name: "ซ่อนรายละเอียด" }).click();
+  await expect(panel).toBeHidden();
+});
 
-// ------------------------------------------------
-// ข้อ 1: ตอนแรก "รายละเอียดสินค้า" ต้องซ่อน กดปุ่ม "แสดงรายละเอียด" แล้วต้องเห็น
-//        กดปุ่ม "ซ่อนรายละเอียด" (ปุ่มเปลี่ยนชื่อเอง) แล้วต้องซ่อนอีกครั้ง
-// ------------------------------------------------
-test.fixme("กดปุ่มแล้วรายละเอียดต้องแสดง กดอีกครั้งต้องซ่อน", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
+test("รายการต้องมี 3 อัน และอันแรกคือ ชา", async ({ page }) => {
+  const items = page.getByRole("listitem");
+  await expect(items).toHaveCount(3);
+  await expect(items.first()).toHaveText("ชา");
+});
 
-
-// ------------------------------------------------
-// ข้อ 2: รายการ (listitem) ต้องมี 3 อัน และอันแรกคือ "ชา"
-// แนวทาง: toHaveCount(3) กับ .first() + toHaveText("ชา")
-// ------------------------------------------------
-test.fixme("รายการต้องมี 3 อัน และอันแรกคือ ชา", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 3: ปุ่ม "ซื้อเลย" ต้องกดไม่ได้ ส่วนปุ่ม "แสดงรายละเอียด" ต้องไม่ disabled
-// ------------------------------------------------
-test.fixme("ปุ่ม ซื้อเลย ต้องกดไม่ได้", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 3 ตรงนี้
+test("ปุ่ม ซื้อเลย ต้องกดไม่ได้", async ({ page }) => {
+  await expect(page.getByRole("button", { name: "ซื้อเลย" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "แสดงรายละเอียด" })).not.toBeDisabled();
+});

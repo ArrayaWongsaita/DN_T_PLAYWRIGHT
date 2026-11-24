@@ -1,23 +1,31 @@
 import { test, expect } from "./fixtures";
 
-// ================================================
-// บทที่ 18: เทสทั้ง flow
-// ฝึก: ประกอบทุกอย่างที่เรียนมา: fixtures, Page Object, test.step, locator, assertion
-//
-// flow ของลูกค้าหนึ่งคน: เลือกสินค้า -> ดูตะกร้า -> กดชำระเงิน -> ถูกส่งไป login
-// -> login -> กลับมา checkout -> ยืนยัน -> เห็น "สั่งซื้อสำเร็จ" -> ตะกร้าว่าง
-//
-// เทส flow เดียวยาวๆ แบบนี้ใช้ตรวจว่าระบบ "ต่อกันติด" เก็บไว้แค่ไม่กี่เส้นทางสำคัญ
-// (เส้นทางย่อยๆ ให้เทสแยกเหมือนบทก่อนหน้า เพราะเร็วกว่าและรู้สาเหตุชัดกว่า)
-// ================================================
+test("เลือกสินค้า -> ตะกร้า -> login -> สั่งซื้อสำเร็จ", async ({ page, productList, cart, loginPage }) => {
+  await test.step("เลือกชากับกาแฟ", async () => {
+    await productList.goto();
+    await productList.add("ชา");
+    await productList.add("กาแฟ");
+  });
 
+  await test.step("ตรวจตะกร้า", async () => {
+    await productList.cartLink.click();
+    await expect(cart.total).toHaveText("รวม ฿130");
+  });
 
-// ------------------------------------------------
-// ข้อ 1: เขียน test เดียว แบ่งเป็น 5 test.step ตาม flow ข้างบน
-//        เมื่อ login ผ่านจะถูกพากลับ /shop/checkout เอง (query ?next=)
-//        ล็อกอินด้วย demo / 1234 ยอดรวมที่ตะกร้าต้องเป็น "รวม ฿130" (ชา + กาแฟ)
-//        ตอนจบเปิด cart.goto() แล้วต้องเห็น "ตะกร้าว่างเปล่า"
-// แนวทาง: ใช้ fixtures productList, cart, loginPage และ page
-// ------------------------------------------------
-test.fixme("เลือกสินค้า -> ตะกร้า -> login -> สั่งซื้อสำเร็จ", async ({ page, productList, cart, loginPage }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้
+  await test.step("ไปชำระเงินแต่ยังไม่ login จึงถูกส่งไปหน้า login", async () => {
+    await cart.checkout();
+    await expect(page).toHaveURL(/\/shop\/login\?next=\/shop\/checkout/);
+  });
+
+  await test.step("login แล้วกลับมาหน้า checkout", async () => {
+    await loginPage.login("demo", "1234");
+    await expect(page).toHaveURL(/\/shop\/checkout$/);
+  });
+
+  await test.step("ยืนยันการสั่งซื้อ ตะกร้าต้องว่าง", async () => {
+    await page.getByRole("button", { name: "ยืนยันการสั่งซื้อ" }).click();
+    await expect(page.getByText("สั่งซื้อสำเร็จ")).toBeVisible();
+    await cart.goto();
+    await expect(page.getByText("ตะกร้าว่างเปล่า")).toBeVisible();
+  });
+});

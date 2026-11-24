@@ -1,47 +1,29 @@
 import { test, expect } from "@playwright/test";
 
-// ================================================
-// บทที่ 14: จัดกลุ่ม test (describe, beforeEach, step)
-// ฝึก: test.describe, test.beforeEach, test.step
-//
-// ตั้งแต่บทนี้เทสแอปร้านค้า (/shop) ที่มีสินค้า 4 อย่าง: ชา ฿50, กาแฟ ฿80, นม ฿40, ขนมปัง ฿30
-// ปุ่มเพิ่มสินค้าชื่อ "เพิ่ม <ชื่อสินค้า> ลงตะกร้า" เช่น "เพิ่ม ชา ลงตะกร้า"
-//
-//   test.describe("ชื่อกลุ่ม", () => { ... })     รวม test ที่เกี่ยวข้องกัน (เหมือน describe ใน Vitest)
-//   test.beforeEach(async ({ page }) => { ... })  ทำก่อนทุก test ในกลุ่ม เช่น เปิดหน้าร้าน
-//   await test.step("ชื่อขั้น", async () => { ... })  แบ่งขั้นใน test เดียว
-//                                                  ชื่อขั้นจะโผล่ใน report และ trace อ่านง่ายมาก
-//
-// ตัวอย่าง:
-//   test.describe("กลุ่มตัวอย่าง", () => {
-//     test.beforeEach(async ({ page }) => { await page.goto("/shop"); });
-//     test("เห็นหัวข้อ", async ({ page }) => {
-//       await expect(page.getByRole("heading", { name: "ร้านค้า" })).toBeVisible();
-//     });
-//   });
-// ================================================
+test.describe("หน้าร้านค้า", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/shop");
+  });
 
+  test("ต้องมีสินค้า 4 อย่าง", async ({ page }) => {
+    await expect(page.getByRole("article")).toHaveCount(4);
+  });
 
-// ------------------------------------------------
-// ข้อ 1: สร้างกลุ่ม "หน้าร้านค้า" ที่ beforeEach เปิด /shop
-//        แล้วเขียน test ในกลุ่ม: ต้องมีสินค้า 4 อย่าง
-// แนวทาง: สินค้าแต่ละอย่างเป็น article => page.getByRole("article") + toHaveCount(4)
-// ------------------------------------------------
-test.fixme("ต้องมีสินค้า 4 อย่าง", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 1 ตรงนี้ (ห่อด้วย test.describe + beforeEach)
+  test("เพิ่มชาแล้วลิงก์ตะกร้าต้องเป็น (1)", async ({ page }) => {
+    await page.getByRole("button", { name: "เพิ่ม ชา ลงตะกร้า" }).click();
+    await expect(page.getByRole("link", { name: "ตะกร้า (1)" })).toBeVisible();
+  });
 
-
-// ------------------------------------------------
-// ข้อ 2: กด "เพิ่ม ชา ลงตะกร้า" แล้วลิงก์ "ตะกร้า (1)" ต้องมองเห็น (อยู่ในกลุ่มเดียวกัน)
-// ------------------------------------------------
-test.fixme("เพิ่มชาแล้วลิงก์ตะกร้าต้องเป็น (1)", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 2 ตรงนี้
-
-
-// ------------------------------------------------
-// ข้อ 3: เพิ่มชากับกาแฟ เปิดตะกร้า ต้องเห็น "รวม ฿130" โดยแบ่งเป็น 3 test.step:
-//        "เพิ่มชา", "เพิ่มกาแฟ", "เปิดตะกร้าและตรวจยอดรวม"
-//        แล้วรันและเปิด pnpm report ดูว่าชื่อ step ขึ้นในรายงาน
-// ------------------------------------------------
-test.fixme("เพิ่มสินค้าสองอย่าง ตะกร้ารวม ฿130", async ({ page }) => {});
-// 👉 เขียน test ของข้อ 3 ตรงนี้
+  test("เพิ่มสินค้าสองอย่าง ตะกร้ารวม ฿130", async ({ page }) => {
+    await test.step("เพิ่มชา", async () => {
+      await page.getByRole("button", { name: "เพิ่ม ชา ลงตะกร้า" }).click();
+    });
+    await test.step("เพิ่มกาแฟ", async () => {
+      await page.getByRole("button", { name: "เพิ่ม กาแฟ ลงตะกร้า" }).click();
+    });
+    await test.step("เปิดตะกร้าและตรวจยอดรวม", async () => {
+      await page.getByRole("link", { name: /^ตะกร้า/ }).click();
+      await expect(page.getByText("รวม ฿130")).toBeVisible();
+    });
+  });
+});
