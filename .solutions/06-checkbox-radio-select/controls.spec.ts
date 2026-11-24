@@ -11,7 +11,7 @@ test("ปุ่ม สมัคร ใช้ได้หลังติ๊ก �
   await expect(submit).toBeEnabled();
 });
 
-test("เลือก ส่งด่วน แล้ว radio ต้องถูกเลือก", async ({ page }) => {
+test("เลือก ส่งด่วน แล้ว radio ต้องสลับ", async ({ page }) => {
   await expect(page.getByLabel("ส่งปกติ")).toBeChecked();
   await page.getByLabel("ส่งด่วน").check();
   await expect(page.getByLabel("ส่งด่วน")).toBeChecked();

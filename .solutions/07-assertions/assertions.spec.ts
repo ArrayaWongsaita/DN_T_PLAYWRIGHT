@@ -19,7 +19,7 @@ test("รายการต้องมี 3 อัน และอันแร�
   await expect(items.first()).toHaveText("ชา");
 });
 
-test("ปุ่ม ซื้อเลย ต้องกดไม่ได้ และปุ่มแสดงรายละเอียดต้องกดได้", async ({ page }) => {
+test("ปุ่ม ซื้อเลย ต้องกดไม่ได้", async ({ page }) => {
   await expect(page.getByRole("button", { name: "ซื้อเลย" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "แสดงรายละเอียด" })).not.toBeDisabled();
 });

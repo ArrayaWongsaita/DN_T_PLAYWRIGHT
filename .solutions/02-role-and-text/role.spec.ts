@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/lessons/02-role-and-text");
 });
 
-test("หาปุ่ม เพิ่มลงตะกร้า ด้วย role แบบ exact", async ({ page }) => {
+test("หาปุ่ม เพิ่ม แบบ exact", async ({ page }) => {
   // name: "เพิ่ม" แบบไม่ exact จะเจอ 2 ปุ่ม (เพราะ "เพิ่มลงตะกร้า" ก็มีคำว่า "เพิ่ม")
   await expect(page.getByRole("button", { name: "เพิ่ม" })).toHaveCount(2);
   await expect(page.getByRole("button", { name: "เพิ่ม", exact: true })).toHaveCount(1);

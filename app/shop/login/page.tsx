@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useHydrated } from "@/lib/shop";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const hydrated = useHydrated();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,15 +30,15 @@ export default function LoginPage() {
       <form onSubmit={submit}>
         <p>
           <label>
-            ชื่อผู้ใช้ <input value={username} onChange={(e) => setUsername(e.target.value)} />
+            ชื่อผู้ใช้ <input disabled={!hydrated} value={username} onChange={(e) => setUsername(e.target.value)} />
           </label>
         </p>
         <p>
           <label>
-            รหัสผ่าน <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            รหัสผ่าน <input disabled={!hydrated} type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </label>
         </p>
-        <button type="submit">เข้าสู่ระบบ</button>
+        <button type="submit" disabled={!hydrated}>เข้าสู่ระบบ</button>
       </form>
       {error && <p role="alert">{error}</p>}
     </main>

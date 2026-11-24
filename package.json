@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port ${PORT:-3000}",
+    "dev": "next dev",
     "build": "next build",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -11,8 +11,8 @@
     "report": "playwright show-report",
     "test:solutions": "PW_SOLUTIONS=1 playwright test",
     "setup:browsers": "playwright install chromium",
-    "start": "next start --port ${PORT:-3000}",
-    "serve:e2e": "[ -f .next/BUILD_ID ] || next build; next start --port ${PORT:-3000}",
+    "start": "next start",
+    "serve:e2e": "node scripts/serve-e2e.mjs",
     "solutions:apply": "node scripts/apply-solutions.mjs"
   },
   "dependencies": {

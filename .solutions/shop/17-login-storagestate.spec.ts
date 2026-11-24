@@ -11,7 +11,7 @@ test.describe("ใช้ session ที่ login ไว้แล้ว", () => {
 });
 
 test.describe("ไม่ได้ login", () => {
-  test("เข้า checkout ต้องถูกส่งไปหน้า login", async ({ page }) => {
+  test("ไม่ได้ login เข้า checkout ต้องถูกส่งไปหน้า login", async ({ page }) => {
     await page.goto("/shop/checkout");
     await expect(page).toHaveURL(/\/shop\/login/);
   });

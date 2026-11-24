@@ -1,7 +1,8 @@
 import { chromium, defineConfig, devices } from "@playwright/test";
 import { existsSync } from "node:fs";
 
-const port = Number(process.env.PORT ?? 3000);
+// พอร์ตของ Playwright แยกจาก pnpm dev (3000) เพื่อไม่ไปใช้ dev server โดยไม่รู้ตัว เปลี่ยนได้ด้วย PORT=xxxx
+const port = Number(process.env.PORT ?? 3100);
 const baseURL = `http://localhost:${port}`;
 
 // ตรวจว่าลง Chromium แล้วหรือยัง ถ้ายังให้บอกวิธีแก้เป็นภาษาไทย

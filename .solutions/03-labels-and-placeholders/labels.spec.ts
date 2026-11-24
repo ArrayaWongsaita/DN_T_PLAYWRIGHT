@@ -13,7 +13,7 @@ test("หาช่องด้วย getByPlaceholder", async ({ page }) => {
   await expect(page.getByPlaceholder("you@example.com")).toBeVisible();
 });
 
-test("ปุ่ม ลบ มี 2 ปุ่ม ต้องจำกัดขอบเขตให้เหลือปุ่มเดียว", async ({ page }) => {
+test("ลบรายการกล้วย", async ({ page }) => {
   // getByRole("button", { name: "ลบ" }).click() จะ error: strict mode violation (เจอ 2 ปุ่ม)
   await expect(page.getByRole("button", { name: "ลบ" })).toHaveCount(2);
   const banana = page.getByRole("listitem").filter({ hasText: "กล้วย" });

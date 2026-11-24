@@ -43,3 +43,12 @@ export function useCart(): CartItem[] {
   const raw = useSyncExternalStore(subscribe, readRaw, () => "[]");
   return JSON.parse(raw) as CartItem[];
 }
+
+/** false ตอน server render, true หลังจาก React พร้อมใช้งานฝั่ง browser (ใช้ disable ปุ่มกันคลิกก่อน hydrate) */
+export function useHydrated(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}

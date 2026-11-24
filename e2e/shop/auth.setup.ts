@@ -1,4 +1,4 @@
-import { test as setup } from "@playwright/test";
+import { test as setup, expect } from "@playwright/test";
 
 // ================================================
 // บทที่ 17 (ส่วนที่ 1): login ครั้งเดียว เก็บ session ไว้ใช้ซ้ำ
