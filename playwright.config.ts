@@ -21,7 +21,8 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm dev",
+    command: "pnpm serve:e2e",
+    timeout: 180_000,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     env: { PORT: String(port) },

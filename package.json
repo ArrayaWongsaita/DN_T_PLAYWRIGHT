@@ -10,7 +10,9 @@
     "test:e2e:headed": "playwright test --headed",
     "report": "playwright show-report",
     "test:solutions": "PW_SOLUTIONS=1 playwright test",
-    "setup:browsers": "playwright install chromium"
+    "setup:browsers": "playwright install chromium",
+    "start": "next start --port ${PORT:-3000}",
+    "serve:e2e": "[ -f .next/BUILD_ID ] || next build; next start --port ${PORT:-3000}"
   },
   "dependencies": {
     "next": "16.4.6",
