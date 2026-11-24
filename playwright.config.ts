@@ -1,0 +1,35 @@
+import { chromium, defineConfig, devices } from "@playwright/test";
+import { existsSync } from "node:fs";
+
+// พอร์ตของ Playwright แยกจาก pnpm dev (3000) เพื่อไม่ไปใช้ dev server โดยไม่รู้ตัว เปลี่ยนได้ด้วย PORT=xxxx
+const port = Number(process.env.PORT ?? 3100);
+const baseURL = `http://localhost:${port}`;
+
+// ตรวจว่าลง Chromium แล้วหรือยัง ถ้ายังให้บอกวิธีแก้เป็นภาษาไทย
+const chromiumPath = chromium.executablePath();
+if (!existsSync(chromiumPath)) {
+  throw new Error("ยังไม่ได้ติดตั้ง Chromium ให้รัน: pnpm setup:browsers");
+}
+
+export default defineConfig({
+  testDir: process.env.PW_SOLUTIONS ? "./.solutions" : "./e2e",
+  fullyParallel: true,
+  reporter: [["html", { open: "never" }], ["list"]],
+  use: {
+    baseURL,
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
+  },
+  projects: [
+    // login ครั้งเดียวแล้วเก็บ session ไว้ใช้ซ้ำ (บท 17)
+    { name: "setup", testMatch: /auth\.setup\.ts/, use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] }, dependencies: ["setup"] },
+  ],
+  webServer: {
+    command: "pnpm serve:e2e",
+    timeout: 180_000,
+    url: baseURL,
+    reuseExistingServer: !process.env.CI,
+    env: { PORT: String(port) },
+  },
+});
